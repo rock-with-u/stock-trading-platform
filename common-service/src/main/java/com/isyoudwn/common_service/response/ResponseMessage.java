@@ -21,7 +21,11 @@ public enum ResponseMessage {
     INVALID_CASH_TRANSACTION_AMOUNT("ACCOUNT-ERROR-006", "입출금 금액은 0보다 커야 합니다."),
 
     INVALID_TRADE_EXECUTION_QUANTITY("TRADE-EXECUTION-001", "체결수량은 0보다 커야합니다."),
-    INVALID_TRADE_EXECUTION_UNIT_PRICE("TRADE-EXECUTION-002", "체결 단가는 0보다 커야 합니다.");
+    INVALID_TRADE_EXECUTION_UNIT_PRICE("TRADE-EXECUTION-002", "체결 단가는 0보다 커야 합니다."),
+
+
+    // market
+    INVALID_CANDLE_TIMEFRAME("MARKET-001", "지원하지 않는 시간 단위입니다");
 
 
     private final String code;
