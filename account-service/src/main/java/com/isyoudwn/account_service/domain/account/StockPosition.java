@@ -1,4 +1,4 @@
-package com.isyoudwn.account_service.domain;
+package com.isyoudwn.account_service.domain.account;
 
 import com.isyoudwn.common_service.domain.BaseEntity;
 import com.isyoudwn.common_service.domain.Stock;

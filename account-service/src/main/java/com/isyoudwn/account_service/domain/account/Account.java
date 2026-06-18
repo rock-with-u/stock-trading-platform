@@ -1,6 +1,7 @@
-package com.isyoudwn.account_service.domain;
+package com.isyoudwn.account_service.domain.account;
 
 
+import com.isyoudwn.account_service.domain.member.Member;
 import com.isyoudwn.common_service.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.isyoudwn.account_service.domain;
+package com.isyoudwn.account_service.domain.account;
 
 import com.isyoudwn.common_service.exception.AccountException;
 import com.isyoudwn.common_service.response.ResponseMessage;
