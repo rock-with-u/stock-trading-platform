@@ -21,4 +21,11 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(ApiResponse.failure(ex.getErrorCode(), ex.getMessage()));
     }
+
+    @ExceptionHandler(TradeExecutionException.class)
+    public ResponseEntity<ApiResponse<String>> handleTradeExecutionException(TradeExecutionException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.failure(ex.getErrorCode(), ex.getMessage()));
+    }
 }
