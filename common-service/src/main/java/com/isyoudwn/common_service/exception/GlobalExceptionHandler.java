@@ -35,4 +35,11 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(ApiResponse.failure(ex.getErrorCode(), ex.getMessage()));
     }
+
+    @ExceptionHandler(StockOrderException.class)
+    public ResponseEntity<ApiResponse<String>> handleOrderException(StockOrderException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.failure(ex.getErrorCode(), ex.getMessage()));
+    }
 }
