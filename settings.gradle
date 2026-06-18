@@ -1,0 +1,6 @@
+rootProject.name = 'trading-platform'
+
+include 'common-service'
+include 'account-service'
+include 'execution-service'
+include 'market-service'
