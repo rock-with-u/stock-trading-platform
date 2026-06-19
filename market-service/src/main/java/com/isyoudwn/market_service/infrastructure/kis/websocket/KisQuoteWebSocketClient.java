@@ -1,11 +1,17 @@
 package com.isyoudwn.market_service.infrastructure.kis.websocket;
 
+import com.isyoudwn.common_service.config.TimeProvider;
 import com.isyoudwn.market_service.infrastructure.kis.config.KisWebSocketProperties;
 import com.isyoudwn.market_service.infrastructure.kis.dto.KisQuoteWebSocketDto;
+import com.isyoudwn.market_service.infrastructure.kis.kafka.event.QuoteSnapshotEvent;
+import com.isyoudwn.market_service.infrastructure.kis.kafka.event.QuoteSnapshotEvent.QuoteLevel;
+import com.isyoudwn.market_service.infrastructure.kis.kafka.producer.QuoteEventProducer;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +28,10 @@ public class KisQuoteWebSocketClient {
     private static final String QUOTE_TRANSACTION_ID = "H0STASP0";
 
     private final ObjectMapper objectMapper;
+    private final QuoteEventProducer quoteEventProducer;
     private final KisWebSocketProperties kisWebSocketProperties;
+    private final TimeProvider timeProvider;
+
     private WebSocket webSocket;
 
     public CompletableFuture<Void> connect() {
@@ -48,11 +57,7 @@ public class KisQuoteWebSocketClient {
             String approvalKey,
             String stockCode
     ) {
-        KisQuoteWebSocketDto.Request request =
-                KisQuoteWebSocketDto.Request.subscribe(
-                        approvalKey,
-                        stockCode
-                );
+        KisQuoteWebSocketDto.Request request = KisQuoteWebSocketDto.Request.subscribe(approvalKey, stockCode);
 
         return send(request)
                 .thenRun(() -> log.info("KIS 호가 구독 요청 완료. stockCode={}", stockCode));
@@ -62,11 +67,7 @@ public class KisQuoteWebSocketClient {
             String approvalKey,
             String stockCode
     ) {
-        KisQuoteWebSocketDto.Request request =
-                KisQuoteWebSocketDto.Request.unsubscribe(
-                        approvalKey,
-                        stockCode
-                );
+        KisQuoteWebSocketDto.Request request = KisQuoteWebSocketDto.Request.unsubscribe(approvalKey, stockCode);
 
         return send(request)
                 .thenRun(() -> log.info("KIS 호가 구독 해제 요청 완료. stockCode={}", stockCode));
@@ -76,9 +77,8 @@ public class KisQuoteWebSocketClient {
             KisQuoteWebSocketDto.Request request
     ) {
         if (!isConnected()) {
-            return CompletableFuture.failedFuture(
-                    new IllegalStateException("KIS 웹소켓이 연결되어 있지 않습니다.")
-            );
+            return CompletableFuture
+                    .failedFuture(new IllegalStateException("KIS 웹소켓이 연결되어 있지 않습니다."));
         }
 
         try {
@@ -144,6 +144,10 @@ public class KisQuoteWebSocketClient {
 
         String stockCode = fields[0];
 
+        QuoteSnapshotEvent event = parseQuoteSnapshot(rawData);
+
+        quoteEventProducer.publish(event);
+
         log.info(
                 "KIS 실시간 호가 수신. stockCode={}, fieldCount={}",
                 stockCode,
@@ -198,5 +202,51 @@ public class KisQuoteWebSocketClient {
             webSocket = null;
             log.error("KIS 웹소켓 오류 발생", error);
         }
+    }
+
+    private QuoteSnapshotEvent parseQuoteSnapshot(String rawData) {
+        String[] fields = rawData.split("\\^");
+
+        if (fields.length < 43) {
+            throw new IllegalArgumentException("KIS 호가 필드 수가 부족합니다. fieldCount=" + fields.length);
+        }
+
+        String stockCode = fields[0];
+
+        List<QuoteLevel> asks = new ArrayList<>();
+        List<QuoteSnapshotEvent.QuoteLevel> bids = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            int level = i + 1;
+
+            long askPrice = parseLong(fields[3 + i]);
+            long bidPrice = parseLong(fields[13 + i]);
+
+            long askQuantity = parseLong(fields[23 + i]);
+            long bidQuantity = parseLong(fields[33 + i]);
+
+            asks.add(new QuoteSnapshotEvent.QuoteLevel(level, askPrice, askQuantity));
+
+            bids.add(new QuoteSnapshotEvent.QuoteLevel(
+                    level,
+                    bidPrice,
+                    bidQuantity
+            ));
+        }
+
+        return new QuoteSnapshotEvent(
+                stockCode,
+                timeProvider.now(),
+                asks,
+                bids
+        );
+    }
+
+    private long parseLong(String value) {
+        if (value == null || value.isBlank()) {
+            return 0L;
+        }
+
+        return Long.parseLong(value.trim());
     }
 }
