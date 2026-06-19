@@ -3,7 +3,7 @@ package com.isyoudwn.market_service.infrastructure.kis.websocket;
 import com.isyoudwn.common_service.exception.StockException;
 import com.isyoudwn.common_service.response.ResponseMessage;
 import com.isyoudwn.common_service.stock.service.StockService;
-import com.isyoudwn.market_service.infrastructure.kis.KisApprovalKeyService;
+import com.isyoudwn.market_service.infrastructure.kis.auth.KisApprovalKeyService;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;

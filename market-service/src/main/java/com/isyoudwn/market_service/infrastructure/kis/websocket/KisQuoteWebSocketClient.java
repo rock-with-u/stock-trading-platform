@@ -1,11 +1,11 @@
 package com.isyoudwn.market_service.infrastructure.kis.websocket;
 
 import com.isyoudwn.common_service.config.TimeProvider;
-import com.isyoudwn.market_service.infrastructure.kis.config.KisWebSocketProperties;
+import com.isyoudwn.market_service.common.KisWebSocketProperties;
 import com.isyoudwn.market_service.infrastructure.kis.dto.KisQuoteWebSocketDto;
-import com.isyoudwn.market_service.infrastructure.kis.kafka.event.QuoteSnapshotEvent;
-import com.isyoudwn.market_service.infrastructure.kis.kafka.event.QuoteSnapshotEvent.QuoteLevel;
-import com.isyoudwn.market_service.infrastructure.kis.kafka.producer.QuoteEventProducer;
+import com.isyoudwn.market_service.infrastructure.kafka.event.QuoteSnapshotEvent;
+import com.isyoudwn.market_service.infrastructure.kafka.event.QuoteSnapshotEvent.QuoteLevel;
+import com.isyoudwn.market_service.infrastructure.kafka.producer.QuoteEventProducer;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
