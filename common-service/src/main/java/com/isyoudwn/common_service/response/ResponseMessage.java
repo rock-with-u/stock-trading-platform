@@ -30,10 +30,11 @@ public enum ResponseMessage {
     INVALID_TRADE_EXECUTION_QUANTITY("TRADE-EXECUTION-001", "체결수량은 0보다 커야합니다."),
     INVALID_TRADE_EXECUTION_UNIT_PRICE("TRADE-EXECUTION-002", "체결 단가는 0보다 커야 합니다."),
 
-
     // market
-    INVALID_CANDLE_TIMEFRAME("MARKET-001", "지원하지 않는 시간 단위입니다");
+    INVALID_CANDLE_TIMEFRAME("MARKET-001", "지원하지 않는 시간 단위입니다"),
 
+    // kis
+    APPROVAL_KEY_ISSUE_FAIL("KIS-ERROR-001", "웹소켓 접속키 발급을 실패했습니다.");
 
     private final String code;
     private final String message;
