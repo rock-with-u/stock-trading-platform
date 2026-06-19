@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.infrastructure.kis;
+package com.isyoudwn.market_service.infrastructure.kis.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -22,6 +22,12 @@ spring:
       port: ${REDIS_PORT}
       timeout: 2s
 
+  kafka:
+    bootstrap-servers: localhost:${KAFKA_PORT}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 server:
   port: ${SERVER_PORT}
 
@@ -29,3 +35,6 @@ kis:
   app-key: ${KIS_APP_KEY}
   app-secret: ${KIS_APP_SECRET}
   rest-base-url: https://openapivts.koreainvestment.com:29443
+  websocket:
+    websocket-url: ws://ops.koreainvestment.com:31000
+
