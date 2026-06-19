@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.domain;
+package com.isyoudwn.market_service.application.market.domain;
 
 import com.isyoudwn.common_service.exception.MarketException;
 import com.isyoudwn.common_service.response.ResponseMessage;
