@@ -73,8 +73,8 @@ public class StockOrder extends BaseEntity {
     @Column(name = "limit_price")
     private Long limitPrice;
 
-    @Column(name = "request_key", nullable = false, unique = true, length = 100)
-    private String requestKey;
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
+    private String idempotencyKey;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, length = 30)
@@ -93,7 +93,7 @@ public class StockOrder extends BaseEntity {
             StockOrderAction orderAction,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
+            String idempotencyKey,
             LocalDateTime orderedAt
     ) {
         this.stock = stock;
@@ -108,7 +108,7 @@ public class StockOrder extends BaseEntity {
         this.remainingQuantity = orderQuantity;
         this.canceledQuantity = 0L;
         this.limitPrice = limitPrice;
-        this.requestKey = requestKey;
+        this.idempotencyKey = idempotencyKey;
         this.orderStatus = StockOrderStatus.PENDING;
         this.orderedAt = orderedAt;
     }
@@ -120,7 +120,7 @@ public class StockOrder extends BaseEntity {
             OrderPriceType orderPriceType,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
+            String idempotencyKey,
             LocalDateTime orderedAt
     ) {
         return new StockOrder(
@@ -133,7 +133,7 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.NEW,
                 orderQuantity,
                 limitPrice,
-                requestKey,
+                idempotencyKey,
                 orderedAt
         );
     }
@@ -143,7 +143,7 @@ public class StockOrder extends BaseEntity {
             OrderPriceType orderPriceType,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
+            String idempotencyKey,
             LocalDateTime orderedAt
     ) {
         StockOrder root;
@@ -164,7 +164,7 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.AMEND,
                 orderQuantity,
                 limitPrice,
-                requestKey,
+                idempotencyKey,
                 orderedAt
         );
     }
@@ -172,7 +172,7 @@ public class StockOrder extends BaseEntity {
     public static StockOrder createCancellation(
             StockOrder parentOrder,
             long orderQuantity,
-            String requestKey,
+            String idempotencyKey,
             LocalDateTime orderedAt
     ) {
         StockOrder root;
@@ -193,7 +193,7 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.CANCEL,
                 orderQuantity,
                 parentOrder.limitPrice,
-                requestKey,
+                idempotencyKey,
                 orderedAt
         );
     }

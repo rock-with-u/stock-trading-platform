@@ -13,8 +13,12 @@ public enum ResponseMessage {
     INVALID_ACCOUNT_STATUS("ACCOUNT-ERROR-001", "올바르지 않는 계좌 상태입니다."),
     INVALID_POSTING_STATUS("ACCOUNT-ERROR-002", "지원하지 않는 전표 상태입니다."),
     INVALID_CASH_BUCKET("ACCOUNT-ERROR-003", "지원하지 않는 금액 상태입니다."),
-    INVALID_POSTING_SOURCE_TYPE("ACCOUNT-ERROR-005", "지원하지 않는 소스 타입입니다."),
     INVALID_CASH_TRANSACTION_TYPE("ACCOUNT-ERROR-004", "지원하지 않는 입출금 상태입니다."),
+    INVALID_POSTING_SOURCE_TYPE("ACCOUNT-ERROR-005", "지원하지 않는 소스 타입입니다."),
+    ACCOUNT_NOT_FOUND("ACCOUNT-ERROR-008", "계좌를 찾을 수 없습니다."),
+    DEPOSIT_DEFICIENT("ACCOUNT-ERROR-009", "예수금이 충분하지 않습니다."),
+    STOCK_POSITION_NOT_FOUND("ACCOUNT-ERROR-010", "보유 주식이 없습니다."),
+    STOCK_QUANTITY_DEFICIENT("ACCOUNT-ERROR-011", "보유 수량이 부족합니다"),
 
     // order
     INVALID_STOCK_ORDER_SIDE("STOCK-ORDER-SIDE-001", "구매 방식은 매도 또는 매수만 지원합니다."),
