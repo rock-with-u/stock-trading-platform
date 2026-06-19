@@ -4,6 +4,7 @@ import com.isyoudwn.common_service.exception.StockException;
 import com.isyoudwn.common_service.response.ResponseMessage;
 import com.isyoudwn.common_service.stock.domain.Stock;
 import com.isyoudwn.common_service.stock.repository.StockRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,5 +21,15 @@ public class StockServiceImpl implements StockService {
         return stockRepository
                 .findByCode(stockCode)
                 .orElseThrow(() -> new StockException(ResponseMessage.STOCK_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getStockCodes() {
+        return stockRepository
+                .findAll()
+                .stream()
+                .map(Stock::getCode)
+                .toList();
     }
 }
