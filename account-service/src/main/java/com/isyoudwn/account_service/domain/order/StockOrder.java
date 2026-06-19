@@ -2,7 +2,7 @@ package com.isyoudwn.account_service.domain.order;
 
 import com.isyoudwn.account_service.domain.account.Account;
 import com.isyoudwn.common_service.domain.BaseEntity;
-import com.isyoudwn.common_service.domain.Stock;
+import com.isyoudwn.common_service.stock.domain.Stock;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

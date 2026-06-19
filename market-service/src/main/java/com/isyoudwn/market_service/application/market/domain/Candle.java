@@ -1,6 +1,6 @@
 package com.isyoudwn.market_service.application.market.domain;
 
-import com.isyoudwn.common_service.domain.Stock;
+import com.isyoudwn.common_service.stock.domain.Stock;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

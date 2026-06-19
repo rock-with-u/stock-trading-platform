@@ -1,4 +1,4 @@
-package com.isyoudwn.common_service.domain;
+package com.isyoudwn.common_service.stock.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

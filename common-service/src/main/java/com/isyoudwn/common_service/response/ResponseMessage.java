@@ -34,7 +34,10 @@ public enum ResponseMessage {
     INVALID_CANDLE_TIMEFRAME("MARKET-001", "지원하지 않는 시간 단위입니다"),
 
     // kis
-    APPROVAL_KEY_ISSUE_FAIL("KIS-ERROR-001", "웹소켓 접속키 발급을 실패했습니다.");
+    APPROVAL_KEY_ISSUE_FAIL("KIS-ERROR-001", "웹소켓 접속키 발급을 실패했습니다."),
+
+    // stock
+    STOCK_NOT_FOUND("STOCK-ERROR-001", "지원하지 않는 주식입니다.");
 
     private final String code;
     private final String message;

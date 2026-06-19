@@ -29,3 +29,6 @@ kis:
   app-key: ${KIS_APP_KEY}
   app-secret: ${KIS_APP_SECRET}
   rest-base-url: https://openapivts.koreainvestment.com:29443
+  websocket:
+    websocket-url: ws://ops.koreainvestment.com:31000
+
