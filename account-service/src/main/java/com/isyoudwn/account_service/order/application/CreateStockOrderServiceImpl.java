@@ -12,31 +12,39 @@ import com.isyoudwn.account_service.account.domain.StockPosition;
 import com.isyoudwn.account_service.account.domain.dto.BuyReservationResult;
 import com.isyoudwn.account_service.account.domain.dto.SellReservationResult;
 import com.isyoudwn.account_service.account.infrastructure.AccountPostingRepository;
-import com.isyoudwn.account_service.account.infrastructure.StockOrderRepository;
 import com.isyoudwn.account_service.order.domain.OrderPriceType;
 import com.isyoudwn.account_service.order.domain.OrderSide;
 import com.isyoudwn.account_service.order.domain.StockOrder;
+import com.isyoudwn.account_service.order.infrastructure.repository.StockOrderRepository;
 import com.isyoudwn.account_service.order.presentaion.dto.OrderRequestDto.CreateOrderDto;
+import com.isyoudwn.account_service.order.infrastructure.outbox.OrderOutboxPayloadSerializer;
+import com.isyoudwn.account_service.order.infrastructure.outbox.OrderOutboxEvent;
+import com.isyoudwn.account_service.order.infrastructure.outbox.OrderOutboxEventType;
+import com.isyoudwn.account_service.order.infrastructure.outbox.message.LimitOrderCreatedMessage;
+import com.isyoudwn.account_service.order.infrastructure.repository.OrderOutboxEventRepository;
 import com.isyoudwn.common_service.config.TimeProvider;
 import com.isyoudwn.common_service.stock.domain.Stock;
 import com.isyoudwn.common_service.stock.service.StockService;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class StockOrderServiceImpl implements StockOrderService {
+public class CreateStockOrderServiceImpl implements CreateStockOrderService {
 
     private final StockService stockService;
     private final AccountService accountService;
     private final CashBalanceChangeService cashBalanceChangeService;
     private final StockPositionService stockPositionService;
     private final StockPositionChangeService stockPositionChangeService;
+    private final OrderOutboxPayloadSerializer orderOutboxPayloadSerializer;
 
     private final StockOrderRepository stockOrderRepository;
     private final AccountPostingRepository accountPostingRepository;
+    private final OrderOutboxEventRepository orderOutboxEventRepository;
 
     private final TimeProvider timeProvider;
 
@@ -99,6 +107,8 @@ public class StockOrderServiceImpl implements StockOrderService {
                 reservedBefore,
                 reservationResult
         );
+
+        saveLimitOrderCreatedOutboxEvent(savedOrder, createOrderDto, orderedAt);
     }
 
     private void sellLimitPrice(StockOrder stockOrder, Account account, CreateOrderDto createOrderDto,
@@ -126,5 +136,35 @@ public class StockOrderServiceImpl implements StockOrderService {
                 stockPosition,
                 sellReservationResult
         );
+
+        saveLimitOrderCreatedOutboxEvent(savedOrder, createOrderDto, orderedAt);
+    }
+
+    private void saveLimitOrderCreatedOutboxEvent(StockOrder savedOrder, CreateOrderDto createOrderDto, LocalDateTime orderedAt) {
+        String eventId = UUID.randomUUID().toString();
+
+        LimitOrderCreatedMessage message = new LimitOrderCreatedMessage(
+                eventId,
+                savedOrder.getId(),
+                createOrderDto.accountNumber(),
+                createOrderDto.stockCode(),
+                createOrderDto.orderSide(),
+                createOrderDto.orderQuantity(),
+                createOrderDto.limitPrice(),
+                orderedAt,
+                createOrderDto.idempotencyKey()
+        );
+
+        String payload = orderOutboxPayloadSerializer.serialize(message);
+
+        OrderOutboxEvent outboxEvent = OrderOutboxEvent.create(
+                eventId,
+                OrderOutboxEventType.LIMIT_ORDER_CREATED,
+                savedOrder.getId(),
+                payload,
+                orderedAt
+        );
+
+        orderOutboxEventRepository.save(outboxEvent);
     }
 }

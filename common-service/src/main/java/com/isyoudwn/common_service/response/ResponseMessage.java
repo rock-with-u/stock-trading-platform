@@ -41,7 +41,10 @@ public enum ResponseMessage {
     APPROVAL_KEY_ISSUE_FAIL("KIS-ERROR-001", "웹소켓 접속키 발급을 실패했습니다."),
 
     // stock
-    STOCK_NOT_FOUND("STOCK-ERROR-001", "지원하지 않는 주식입니다.");
+    STOCK_NOT_FOUND("STOCK-ERROR-001", "지원하지 않는 주식입니다."),
+
+    // order outbox
+    ORDER_OUTBOX_EVENT_IS_NOT_EXIST("ORDER-OUTBOX-ERROR-001", "존재하지 않는 아웃박스입니다.");
 
     private final String code;
     private final String message;
