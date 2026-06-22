@@ -1,5 +1,6 @@
 package com.isyoudwn.account_service.order.infrastructure.outbox;
 
+import com.isyoudwn.account_service.order.application.OrderRejectService;
 import com.isyoudwn.account_service.order.infrastructure.repository.OrderOutboxEventRepository;
 import com.isyoudwn.common_service.exception.OrderOutboxException;
 import com.isyoudwn.common_service.response.ResponseMessage;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderOutboxMarkService {
 
     private final OrderOutboxEventRepository orderOutboxEventRepository;
+    private final OrderRejectService orderRejectService;
 
     @Transactional
     public void markPublished(String eventId, LocalDateTime now) {
@@ -34,5 +36,9 @@ public class OrderOutboxMarkService {
                 );
 
         event.markFailed(reason, now);
+
+        if (event.getStatus() == OrderOutboxEventStatus.DEAD_LETTERED) {
+            orderRejectService.rejectOrder(event.getStockOrderId());
+        }
     }
 }

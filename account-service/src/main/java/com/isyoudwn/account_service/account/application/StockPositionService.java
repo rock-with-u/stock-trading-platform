@@ -19,4 +19,10 @@ public class StockPositionService {
                 .findByAccountAndStock(account, stock)
                 .orElseThrow(() -> new AccountException(ResponseMessage.STOCK_POSITION_NOT_FOUND));
     }
+
+    public StockPosition getByAccountAndStock(Account account, Stock stock) {
+        return stockPositionRepository
+                .findByAccountAndStock(account, stock)
+                .orElseThrow(() -> new AccountException(ResponseMessage.STOCK_POSITION_NOT_FOUND));
+    }
 }

@@ -10,7 +10,8 @@ public enum StockOrderStatus {
     PARTIALLY_FILLED("부분 체결"),
     FILLED("전량 체결"),
     CANCELED("주문 취소"),
-    REJECTED("주문 거절");
+    REJECTED("주문 거절"),
+    EXPIRED("만료");
 
     private final String description;
 

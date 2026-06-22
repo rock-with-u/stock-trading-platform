@@ -66,20 +66,25 @@ public class StockPosition extends BaseEntity {
     }
 
     public SellReservationResult reserveSell(long orderQuantity) {
-
         long availableQuantity = positionQuantity - sellReservedQuantity;
 
         if (availableQuantity < orderQuantity) {
             throw new AccountException(ResponseMessage.STOCK_QUANTITY_DEFICIENT);
         }
 
+        long sellReservedQuantityBefore = this.sellReservedQuantity;
+
         this.sellReservedQuantity += orderQuantity;
-        long quantityAfter = availableQuantity - orderQuantity;
+
+        long sellReservedQuantityAfter = this.sellReservedQuantity;
 
         return new SellReservationResult(
-                availableQuantity,
-                quantityAfter,
-                orderQuantity
+                sellReservedQuantityBefore,
+                sellReservedQuantityAfter
         );
+    }
+
+    public void releaseSellReservation(long quantity) {
+        this.sellReservedQuantity -= quantity;
     }
 }

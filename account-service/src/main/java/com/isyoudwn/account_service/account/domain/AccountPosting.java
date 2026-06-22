@@ -43,8 +43,8 @@ public class AccountPosting extends BaseEntity {
     @Column(name = "source_type", nullable = false, length = 50)
     private PostingSourceType sourceType;
 
-    @Column(name = "posting_key", nullable = false, unique = true, length = 100)
-    private String postingKey;
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
+    private String idempotencyKey;
 
     @Column(name = "occurred_at", nullable = false)
     private LocalDateTime occurredAt;
@@ -54,14 +54,14 @@ public class AccountPosting extends BaseEntity {
             PostingType postingType,
             Long sourceId,
             PostingSourceType sourceType,
-            String postingKey,
+            String idempotencyKey,
             LocalDateTime occurredAt
     ) {
         this.account = account;
         this.postingType = postingType;
         this.sourceId = sourceId;
         this.sourceType = sourceType;
-        this.postingKey = postingKey;
+        this.idempotencyKey = idempotencyKey;
         this.occurredAt = occurredAt;
     }
 
@@ -70,10 +70,10 @@ public class AccountPosting extends BaseEntity {
             PostingType postingType,
             Long sourceId,
             PostingSourceType sourceType,
-            String postingKey,
+            String idempotencyKey,
             LocalDateTime occurredAt
     ) {
-        return new AccountPosting(account, postingType, sourceId, sourceType, postingKey, occurredAt);
+        return new AccountPosting(account, postingType, sourceId, sourceType, idempotencyKey, occurredAt);
     }
 }
 

@@ -88,4 +88,11 @@ public class Account extends BaseEntity {
                 orderAmount
         );
     }
+
+    public void releaseBuyAmount(long usedSettledAmount, long usedUnsettledAmount,
+                                 long reservedAmount) {
+        this.availableSettledCashAmount += usedSettledAmount;
+        this.unsettledSellReceivableAmount += usedUnsettledAmount;
+        this.reservedBuyAmount -= reservedAmount;
+    }
 }

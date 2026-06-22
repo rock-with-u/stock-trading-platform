@@ -17,7 +17,8 @@ public enum PostingType {
     SELL_QUANTITY_RELEASED("매도 예약 수량 해제"),
     SELL_EXECUTED("매도 체결"),
 
-    TRADE_SETTLED("결제");
+    TRADE_SETTLED("결제"),
+    ORDER_REJECT("주문 거절");
 
     private final String description;
 
