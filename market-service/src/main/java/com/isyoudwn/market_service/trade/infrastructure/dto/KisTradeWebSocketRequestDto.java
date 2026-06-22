@@ -1,12 +1,9 @@
-package com.isyoudwn.market_service.quote.infrastructure.dto;
+package com.isyoudwn.market_service.trade.infrastructure.dto;
 
 import com.isyoudwn.market_service.common.websocket.KisRealtimeTransactionId;
 import com.isyoudwn.market_service.common.websocket.KisWebSocketRequestDto;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class KisQuoteWebSocketRequestDto {
+public class KisTradeWebSocketRequestDto {
 
     public static KisWebSocketRequestDto.Request subscribe(
             String approvalKey,
@@ -14,7 +11,7 @@ public class KisQuoteWebSocketRequestDto {
     ) {
         return KisWebSocketRequestDto.subscribe(
                 approvalKey,
-                KisRealtimeTransactionId.STOCK_QUOTE,
+                KisRealtimeTransactionId.STOCK_TRADE,
                 stockCode
         );
     }
@@ -25,7 +22,7 @@ public class KisQuoteWebSocketRequestDto {
     ) {
         return KisWebSocketRequestDto.unsubscribe(
                 approvalKey,
-                KisRealtimeTransactionId.STOCK_QUOTE,
+                KisRealtimeTransactionId.STOCK_TRADE,
                 stockCode
         );
     }

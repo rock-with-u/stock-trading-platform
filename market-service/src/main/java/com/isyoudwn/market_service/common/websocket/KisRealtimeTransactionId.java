@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.common;
+package com.isyoudwn.market_service.common.websocket;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
