@@ -31,7 +31,6 @@ public class KisQuoteWebSocketMessageHandler {
         }
 
         ParsedRealtimeMessageDto realtimeMessage = realtimeMessageParser.parse(message);
-
         handleRealtimeMessage(realtimeMessage);
     }
 
@@ -49,12 +48,6 @@ public class KisQuoteWebSocketMessageHandler {
             handleQuoteSnapshot(realtimeMessage);
             return;
         }
-
-        log.debug(
-                "Unsupported KIS quote transactionId={}, body={}",
-                realtimeMessage.transactionId(),
-                realtimeMessage.body()
-        );
     }
 
     private void handleQuoteSnapshot(ParsedRealtimeMessageDto realtimeMessage) {
@@ -64,15 +57,6 @@ public class KisQuoteWebSocketMessageHandler {
         );
 
         quoteEventProducer.publish(event);
-
-        log.info(
-                "KIS 실시간 호가 수신. dataCount={}, stockCode={}, askLevels={}, bidLevels={}, receivedAt={}",
-                realtimeMessage.dataCount(),
-                event.stockCode(),
-                event.asks().size(),
-                event.bids().size(),
-                event.receivedAt()
-        );
     }
 
     private void handleJsonMessage(String message) {

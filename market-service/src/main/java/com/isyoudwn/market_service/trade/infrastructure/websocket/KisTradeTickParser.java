@@ -1,7 +1,6 @@
 package com.isyoudwn.market_service.trade.infrastructure.websocket;
 
-import com.isyoudwn.market_service.trade.infrastructure.dto.KisTradeTickDto;
-import java.time.LocalDate;
+import com.isyoudwn.market_service.trade.infrastructure.kafka.event.TickSnapshotEvent;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,31 +11,46 @@ public class KisTradeTickParser {
 
     private static final DateTimeFormatter TRADE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmmss");
 
-    public KisTradeTickDto parse(String body) {
-        String[] values = body.split("\\^");
+    public TickSnapshotEvent parse(
+            String body,
+            LocalDateTime receivedAt
+    ) {
+        String[] values = body.split("\\^", -1);
 
         validate(values, body);
 
         String stockCode = values[KisTradeTickFieldIndex.STOCK_CODE];
-        Long tradePrice = parseLong(values[KisTradeTickFieldIndex.TRADE_PRICE]);
+        long tradePrice = parseLong(values[KisTradeTickFieldIndex.TRADE_PRICE]);
 
-        Long tradeVolume = getLongOrZero(values, KisTradeTickFieldIndex.TRADE_VOLUME);
-        Long accumulatedVolume = getLongOrZero(values, KisTradeTickFieldIndex.ACCUMULATED_VOLUME);
+        long tradeVolume = getLongOrZero(values, KisTradeTickFieldIndex.TRADE_VOLUME);
+        long accumulatedVolume = getLongOrZero(values, KisTradeTickFieldIndex.ACCUMULATED_VOLUME);
 
-        LocalDateTime tradedAt = LocalDateTime.of(
-                LocalDate.now(),
-                LocalTime.parse(
-                        values[KisTradeTickFieldIndex.TRADE_TIME],
-                        TRADE_TIME_FORMATTER
-                )
+        LocalDateTime tradedAt = parseTradedAt(
+                values[KisTradeTickFieldIndex.TRADE_TIME],
+                receivedAt
         );
 
-        return new KisTradeTickDto(
+        return new TickSnapshotEvent(
                 stockCode,
                 tradePrice,
                 tradeVolume,
                 accumulatedVolume,
                 tradedAt
+        );
+    }
+
+    private LocalDateTime parseTradedAt(
+            String tradeTime,
+            LocalDateTime receivedAt
+    ) {
+        LocalTime parsedTradeTime = LocalTime.parse(
+                tradeTime,
+                TRADE_TIME_FORMATTER
+        );
+
+        return LocalDateTime.of(
+                receivedAt.toLocalDate(),
+                parsedTradeTime
         );
     }
 
@@ -46,7 +60,7 @@ public class KisTradeTickParser {
         }
     }
 
-    private Long getLongOrZero(String[] values, int index) {
+    private long getLongOrZero(String[] values, int index) {
         if (values.length <= index) {
             return 0L;
         }
@@ -54,16 +68,17 @@ public class KisTradeTickParser {
         return parseLong(values[index]);
     }
 
-    private Long parseLong(String value) {
+    private long parseLong(String value) {
         if (value == null || value.isBlank()) {
             return 0L;
         }
 
-        return Long.valueOf(value
-                .replace(",", "")
-                .replace("+", "")
-                .replace("-", "")
-                .trim()
+        return Long.parseLong(
+                value
+                        .replace(",", "")
+                        .replace("+", "")
+                        .replace("-", "")
+                        .trim()
         );
     }
 }
