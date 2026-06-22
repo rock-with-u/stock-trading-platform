@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.quote.infrastructure.websocket;
+package com.isyoudwn.market_service.common.websocket;
 
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -10,32 +10,35 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KisQuoteWebSocketLifecycleManager {
+public class KisRealtimeWebSocketLifecycleManager {
 
-    private final KisQuoteSubscriptionService subscriptionService;
+    private final KisRealtimeSubscriptionService realtimeSubscriptionService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void start() {
-        subscriptionService
+        realtimeSubscriptionService
                 .start()
                 .whenComplete((ignored, throwable) -> {
                     if (throwable == null) {
-                        log.info("KIS 호가 웹소켓 초기화 완료");
+                        log.info("KIS 실시간 웹소켓 초기화 완료");
                         return;
                     }
 
-                    log.error("KIS 호가 웹소켓 초기화 실패", throwable);
+                    log.error("KIS 실시간 웹소켓 초기화 실패", throwable);
                 });
     }
 
     @PreDestroy
     public void stop() {
         try {
-            subscriptionService
+            realtimeSubscriptionService
                     .stop()
                     .join();
+
+            log.info("KIS 실시간 웹소켓 종료 완료");
+
         } catch (RuntimeException exception) {
-            log.warn("KIS 호가 웹소켓 종료 중 오류 발생", exception);
+            log.warn("KIS 실시간 웹소켓 종료 중 오류 발생", exception);
         }
     }
 }

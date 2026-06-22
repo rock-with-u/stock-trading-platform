@@ -2,7 +2,7 @@ package com.isyoudwn.market_service.auth.infrastructure;
 
 import com.isyoudwn.common_service.exception.KisException;
 import com.isyoudwn.common_service.response.ResponseMessage;
-import com.isyoudwn.market_service.common.KisProperties;
+import com.isyoudwn.market_service.common.config.KisProperties;
 import com.isyoudwn.market_service.auth.infrastructure.dto.KisApprovalKeyDto.KisApprovalKeyRequest;
 import com.isyoudwn.market_service.auth.infrastructure.dto.KisApprovalKeyDto.KisApprovalKeyResponse;
 import lombok.RequiredArgsConstructor;

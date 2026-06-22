@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.common;
+package com.isyoudwn.market_service.common.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
