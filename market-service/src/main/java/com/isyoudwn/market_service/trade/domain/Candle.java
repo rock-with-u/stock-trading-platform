@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.application.market.domain;
+package com.isyoudwn.market_service.trade.domain;
 
 import com.isyoudwn.common_service.stock.domain.Stock;
 import jakarta.persistence.Column;

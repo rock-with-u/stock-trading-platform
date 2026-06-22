@@ -1,11 +1,13 @@
-package com.isyoudwn.market_service.infrastructure.kis.websocket;
+package com.isyoudwn.market_service.quote.infrastructure.websocket;
 
 import com.isyoudwn.common_service.config.TimeProvider;
+import com.isyoudwn.market_service.common.KisRealtimeTransactionId;
 import com.isyoudwn.market_service.common.KisWebSocketProperties;
-import com.isyoudwn.market_service.infrastructure.kis.dto.KisQuoteWebSocketDto;
-import com.isyoudwn.market_service.infrastructure.kafka.event.QuoteSnapshotEvent;
-import com.isyoudwn.market_service.infrastructure.kafka.event.QuoteSnapshotEvent.QuoteLevel;
-import com.isyoudwn.market_service.infrastructure.kafka.producer.QuoteEventProducer;
+import com.isyoudwn.market_service.common.KisWebSocketRequestDto;
+import com.isyoudwn.market_service.quote.infrastructure.dto.KisQuoteWebSocketRequestDto;
+import com.isyoudwn.market_service.quote.infrastructure.kafka.event.QuoteSnapshotEvent;
+import com.isyoudwn.market_service.quote.infrastructure.kafka.event.QuoteSnapshotEvent.QuoteLevel;
+import com.isyoudwn.market_service.quote.infrastructure.kafka.producer.QuoteEventProducer;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -25,7 +27,6 @@ import tools.jackson.databind.ObjectMapper;
 public class KisQuoteWebSocketClient {
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
-    private static final String QUOTE_TRANSACTION_ID = "H0STASP0";
 
     private final ObjectMapper objectMapper;
     private final QuoteEventProducer quoteEventProducer;
@@ -57,7 +58,7 @@ public class KisQuoteWebSocketClient {
             String approvalKey,
             String stockCode
     ) {
-        KisQuoteWebSocketDto.Request request = KisQuoteWebSocketDto.Request.subscribe(approvalKey, stockCode);
+        KisWebSocketRequestDto.Request request = KisQuoteWebSocketRequestDto.subscribe(approvalKey, stockCode);
 
         return send(request)
                 .thenRun(() -> log.info("KIS 호가 구독 요청 완료. stockCode={}", stockCode));
@@ -67,14 +68,15 @@ public class KisQuoteWebSocketClient {
             String approvalKey,
             String stockCode
     ) {
-        KisQuoteWebSocketDto.Request request = KisQuoteWebSocketDto.Request.unsubscribe(approvalKey, stockCode);
+        KisWebSocketRequestDto.Request request =
+                KisQuoteWebSocketRequestDto.subscribe(approvalKey, stockCode);
 
         return send(request)
                 .thenRun(() -> log.info("KIS 호가 구독 해제 요청 완료. stockCode={}", stockCode));
     }
 
     private CompletableFuture<Void> send(
-            KisQuoteWebSocketDto.Request request
+            KisWebSocketRequestDto.Request request
     ) {
         if (!isConnected()) {
             return CompletableFuture
@@ -131,7 +133,7 @@ public class KisQuoteWebSocketClient {
         String transactionId = messageParts[1];
         String rawData = messageParts[3];
 
-        if (!QUOTE_TRANSACTION_ID.equals(transactionId)) {
+        if (!KisRealtimeTransactionId.STOCK_QUOTE.getCode().equals(transactionId)) {
             log.debug("처리하지 않는 KIS 메시지입니다. trId={}", transactionId);
             return;
         }

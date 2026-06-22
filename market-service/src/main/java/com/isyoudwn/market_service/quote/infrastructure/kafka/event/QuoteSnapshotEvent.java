@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.infrastructure.kafka.event;
+package com.isyoudwn.market_service.quote.infrastructure.kafka.event;
 
 import java.time.LocalDateTime;
 import java.util.List;

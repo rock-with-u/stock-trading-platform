@@ -1,5 +1,6 @@
-package com.isyoudwn.market_service.infrastructure.kis.auth;
+package com.isyoudwn.market_service.auth.infrastructure;
 
+import com.isyoudwn.market_service.auth.application.KisApprovalKeyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

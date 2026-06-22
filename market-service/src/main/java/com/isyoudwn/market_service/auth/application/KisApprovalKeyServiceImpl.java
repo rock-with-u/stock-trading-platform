@@ -1,5 +1,7 @@
-package com.isyoudwn.market_service.infrastructure.kis.auth;
+package com.isyoudwn.market_service.auth.application;
 
+import com.isyoudwn.market_service.auth.infrastructure.KisApprovalKeyClient;
+import com.isyoudwn.market_service.auth.infrastructure.KisApprovalKeyRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
