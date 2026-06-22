@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.infrastructure.kis.auth;
+package com.isyoudwn.market_service.auth.infrastructure;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class KisRedisRepository implements KisApprovalKeyRepository {
+public class KisApprovalKeyRedisRepository implements KisApprovalKeyRepository {
 
     private static final String APPROVAL_KEY = "kis:approval-key";
     private static final Duration EXPIRATION = Duration.ofHours(24);

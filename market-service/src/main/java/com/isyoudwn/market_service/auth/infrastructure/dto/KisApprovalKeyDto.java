@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.infrastructure.kis.dto;
+package com.isyoudwn.market_service.auth.infrastructure.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,39 +1,40 @@
-package com.isyoudwn.market_service.infrastructure.kis.dto;
+package com.isyoudwn.market_service.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class KisQuoteWebSocketDto {
+public class KisWebSocketRequestDto {
 
-    private static final String STOCK_ORDER_BOOK_TR_ID = "H0STASP0";
     private static final String CONTENT_TYPE = "utf-8";
+
+    public static Request subscribe(
+            String approvalKey,
+            KisRealtimeTransactionId transactionId,
+            String stockCode
+    ) {
+        return new Request(
+                Header.subscribe(approvalKey),
+                Body.of(transactionId, stockCode)
+        );
+    }
+
+    public static Request unsubscribe(
+            String approvalKey,
+            KisRealtimeTransactionId transactionId,
+            String stockCode
+    ) {
+        return new Request(
+                Header.unsubscribe(approvalKey),
+                Body.of(transactionId, stockCode)
+        );
+    }
 
     public record Request(
             Header header,
             Body body
     ) {
-
-        public static Request subscribe(
-                String approvalKey,
-                String stockCode
-        ) {
-            return new Request(
-                    Header.subscribe(approvalKey),
-                    Body.stockOrderBook(stockCode)
-            );
-        }
-
-        public static Request unsubscribe(
-                String approvalKey,
-                String stockCode
-        ) {
-            return new Request(
-                    Header.unsubscribe(approvalKey),
-                    Body.stockOrderBook(stockCode)
-            );
-        }
     }
 
     public record Header(
@@ -73,10 +74,13 @@ public class KisQuoteWebSocketDto {
             Input input
     ) {
 
-        private static Body stockOrderBook(String stockCode) {
+        private static Body of(
+                KisRealtimeTransactionId transactionId,
+                String stockCode
+        ) {
             return new Body(
                     new Input(
-                            STOCK_ORDER_BOOK_TR_ID,
+                            transactionId.getCode(),
                             stockCode
                     )
             );

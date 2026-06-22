@@ -1,4 +1,4 @@
-package com.isyoudwn.market_service.infrastructure.kis.auth;
+package com.isyoudwn.market_service.auth.infrastructure;
 
 import java.util.Optional;
 

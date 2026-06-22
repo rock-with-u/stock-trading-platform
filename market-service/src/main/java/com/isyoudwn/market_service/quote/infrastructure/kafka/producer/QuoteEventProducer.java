@@ -1,6 +1,6 @@
-package com.isyoudwn.market_service.infrastructure.kafka.producer;
+package com.isyoudwn.market_service.quote.infrastructure.kafka.producer;
 
-import com.isyoudwn.market_service.infrastructure.kafka.event.QuoteSnapshotEvent;
+import com.isyoudwn.market_service.quote.infrastructure.kafka.event.QuoteSnapshotEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
