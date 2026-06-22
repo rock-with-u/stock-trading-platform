@@ -1,6 +1,6 @@
 package com.isyoudwn.account_service.order.presentaion;
 
-import com.isyoudwn.account_service.order.application.CreateStockOrderService;
+import com.isyoudwn.account_service.order.application.OrderCreateService;
 import com.isyoudwn.account_service.order.presentaion.dto.OrderRequestDto;
 import com.isyoudwn.common_service.response.ApiResponse;
 import com.isyoudwn.common_service.response.ResponseMessage;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/orders")
 public class StockOrderController {
 
-    private final CreateStockOrderService createStockOrderService;
+    private final OrderCreateService orderCreateService;
 
     @PostMapping("")
     public ResponseEntity<ApiResponse<Void>> createOrder(
@@ -26,7 +26,7 @@ public class StockOrderController {
             OrderRequestDto.CreateOrderDto createOrderDto
     ) {
 
-        createStockOrderService.createNewOrder(createOrderDto);
+        orderCreateService.createNewOrder(createOrderDto);
 
         return ResponseEntity
                 .ok()

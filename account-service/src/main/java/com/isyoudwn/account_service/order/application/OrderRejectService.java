@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderRejectService {
 
     private final TimeProvider timeProvider;
-    private final StockOrderService stockOrderService;
+    private final OrderService orderService;
     private final OrderIdempotencyKeyFactory orderIdempotencyKeyFactory;
     private final CashBalanceChangeService cashBalanceChangeService;
     private final StockPositionChangeService stockPositionChangeService;
@@ -30,11 +30,11 @@ public class OrderRejectService {
 
     @Transactional
     public void rejectOrder(Long orderId) {
-        StockOrder parentOrder = stockOrderService.getById(orderId);
+        StockOrder parentOrder = orderService.getById(orderId);
         String idempotencyKey = orderIdempotencyKeyFactory.systemRejectOrderByOutboxDeadLetter(orderId);
         LocalDateTime rejectedAt = timeProvider.now();
 
-        if (stockOrderService.existsByIdempotencyKey(idempotencyKey)) {
+        if (orderService.existsByIdempotencyKey(idempotencyKey)) {
             return;
         }
 
@@ -44,7 +44,7 @@ public class OrderRejectService {
                 rejectedAt
         );
 
-        stockOrderService.save(rejectOrder);
+        orderService.save(rejectOrder);
 
         if (parentOrder.getOrderSide() == OrderSide.BUY) {
             releaseBuyReservation(parentOrder, rejectOrder, rejectedAt);

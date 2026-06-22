@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateStockOrderServiceImpl implements CreateStockOrderService {
+public class OrderCreateServiceImpl implements OrderCreateService {
 
     private final StockService stockService;
     private final AccountService accountService;

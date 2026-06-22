@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class StockOrderService {
+public class OrderService {
     private final StockOrderRepository stockOrderRepository;
 
     public StockOrder getById(Long stockOrderId) {
