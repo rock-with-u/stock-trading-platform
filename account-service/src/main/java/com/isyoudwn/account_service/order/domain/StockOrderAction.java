@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum StockOrderAction {
     NEW("신규 주문"),
     AMEND("주문 정정"),
-    CANCEL("주문 취소");
+    CANCEL("주문 취소"),
+    SYSTEM_REJECT("시스템 사유로 주문 실패");
 
     private final String description;
 

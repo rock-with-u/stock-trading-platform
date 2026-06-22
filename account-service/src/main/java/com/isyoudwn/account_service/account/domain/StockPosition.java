@@ -1,6 +1,9 @@
 package com.isyoudwn.account_service.account.domain;
 
+import com.isyoudwn.account_service.account.domain.dto.SellReservationResult;
 import com.isyoudwn.common_service.domain.BaseEntity;
+import com.isyoudwn.common_service.exception.AccountException;
+import com.isyoudwn.common_service.response.ResponseMessage;
 import com.isyoudwn.common_service.stock.domain.Stock;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,5 +63,28 @@ public class StockPosition extends BaseEntity {
 
     public static StockPosition create(Account account, Stock stock) {
         return new StockPosition(account, stock);
+    }
+
+    public SellReservationResult reserveSell(long orderQuantity) {
+        long availableQuantity = positionQuantity - sellReservedQuantity;
+
+        if (availableQuantity < orderQuantity) {
+            throw new AccountException(ResponseMessage.STOCK_QUANTITY_DEFICIENT);
+        }
+
+        long sellReservedQuantityBefore = this.sellReservedQuantity;
+
+        this.sellReservedQuantity += orderQuantity;
+
+        long sellReservedQuantityAfter = this.sellReservedQuantity;
+
+        return new SellReservationResult(
+                sellReservedQuantityBefore,
+                sellReservedQuantityAfter
+        );
+    }
+
+    public void releaseSellReservation(long quantity) {
+        this.sellReservedQuantity -= quantity;
     }
 }

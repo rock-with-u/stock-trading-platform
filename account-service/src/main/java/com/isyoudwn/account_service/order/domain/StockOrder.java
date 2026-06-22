@@ -55,7 +55,7 @@ public class StockOrder extends BaseEntity {
     private OrderPriceType priceType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_action", nullable = false, length = 10)
+    @Column(name = "order_action", nullable = false, length = 20)
     private StockOrderAction orderAction;
 
     @Column(name = "order_quantity", nullable = false)
@@ -73,15 +73,15 @@ public class StockOrder extends BaseEntity {
     @Column(name = "limit_price")
     private Long limitPrice;
 
-    @Column(name = "request_key", nullable = false, unique = true, length = 100)
-    private String requestKey;
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
+    private String idempotencyKey;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, length = 30)
     private StockOrderStatus orderStatus;
 
-    @Column(name = "order_at", nullable = false)
-    private LocalDateTime orderedAt;
+    @Column(name = "requested_at", nullable = false)
+    private LocalDateTime requestedAt;
 
     private StockOrder(
             Stock stock,
@@ -93,8 +93,9 @@ public class StockOrder extends BaseEntity {
             StockOrderAction orderAction,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
-            LocalDateTime orderedAt
+            String idempotencyKey,
+            StockOrderStatus orderStatus,
+            LocalDateTime requestedAt
     ) {
         this.stock = stock;
         this.account = account;
@@ -108,9 +109,9 @@ public class StockOrder extends BaseEntity {
         this.remainingQuantity = orderQuantity;
         this.canceledQuantity = 0L;
         this.limitPrice = limitPrice;
-        this.requestKey = requestKey;
-        this.orderStatus = StockOrderStatus.PENDING;
-        this.orderedAt = orderedAt;
+        this.idempotencyKey = idempotencyKey;
+        this.orderStatus = orderStatus;
+        this.requestedAt = requestedAt;
     }
 
     public static StockOrder createNew(
@@ -120,8 +121,8 @@ public class StockOrder extends BaseEntity {
             OrderPriceType orderPriceType,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
-            LocalDateTime orderedAt
+            String idempotencyKey,
+            LocalDateTime requestedAt
     ) {
         return new StockOrder(
                 stock,
@@ -133,8 +134,9 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.NEW,
                 orderQuantity,
                 limitPrice,
-                requestKey,
-                orderedAt
+                idempotencyKey,
+                StockOrderStatus.PENDING,
+                requestedAt
         );
     }
 
@@ -143,16 +145,10 @@ public class StockOrder extends BaseEntity {
             OrderPriceType orderPriceType,
             long orderQuantity,
             Long limitPrice,
-            String requestKey,
-            LocalDateTime orderedAt
+            String idempotencyKey,
+            LocalDateTime requestedAt
     ) {
-        StockOrder root;
-
-        if (parentOrder.rootOrder == null) {
-            root = parentOrder;
-        } else {
-            root = parentOrder.rootOrder;
-        }
+        StockOrder root = parentOrder.getRootOrderOrSelf();
 
         return new StockOrder(
                 parentOrder.stock,
@@ -164,24 +160,19 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.AMEND,
                 orderQuantity,
                 limitPrice,
-                requestKey,
-                orderedAt
+                idempotencyKey,
+                StockOrderStatus.PENDING,
+                requestedAt
         );
     }
 
     public static StockOrder createCancellation(
             StockOrder parentOrder,
             long orderQuantity,
-            String requestKey,
-            LocalDateTime orderedAt
+            String idempotencyKey,
+            LocalDateTime requestedAt
     ) {
-        StockOrder root;
-
-        if (parentOrder.rootOrder == null) {
-            root = parentOrder;
-        } else {
-            root = parentOrder.rootOrder;
-        }
+        StockOrder root = parentOrder.getRootOrderOrSelf();
 
         return new StockOrder(
                 parentOrder.stock,
@@ -193,8 +184,40 @@ public class StockOrder extends BaseEntity {
                 StockOrderAction.CANCEL,
                 orderQuantity,
                 parentOrder.limitPrice,
-                requestKey,
-                orderedAt
+                idempotencyKey,
+                StockOrderStatus.PENDING,
+                requestedAt
         );
+    }
+
+    public static StockOrder createSystemReject(
+            StockOrder parentOrder,
+            String idempotencyKey,
+            LocalDateTime requestedAt
+    ) {
+        StockOrder root = parentOrder.getRootOrderOrSelf();
+
+        return new StockOrder(
+                parentOrder.stock,
+                parentOrder.account,
+                root,
+                parentOrder,
+                parentOrder.orderSide,
+                parentOrder.getPriceType(),
+                StockOrderAction.SYSTEM_REJECT,
+                parentOrder.remainingQuantity,
+                parentOrder.limitPrice,
+                idempotencyKey,
+                StockOrderStatus.REJECTED,
+                requestedAt
+        );
+    }
+
+    private StockOrder getRootOrderOrSelf() {
+        if (this.rootOrder == null) {
+            return this;
+        }
+
+        return this.rootOrder;
     }
 }

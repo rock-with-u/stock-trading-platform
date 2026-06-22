@@ -1,8 +1,11 @@
 package com.isyoudwn.account_service.account.domain;
 
 
+import com.isyoudwn.account_service.account.domain.dto.BuyReservationResult;
 import com.isyoudwn.account_service.member.domain.Member;
 import com.isyoudwn.common_service.domain.BaseEntity;
+import com.isyoudwn.common_service.exception.AccountException;
+import com.isyoudwn.common_service.response.ResponseMessage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -56,5 +59,40 @@ public class Account extends BaseEntity {
         this.availableSettledCashAmount = 0L;
         this.reservedBuyAmount = 0L;
         this.unsettledSellReceivableAmount = 0L;
+    }
+
+    public long getBuyAvailableAmount() {
+        return availableSettledCashAmount + unsettledSellReceivableAmount;
+    }
+
+
+    public BuyReservationResult reserveBuyAmount(long orderAmount) {
+        if (getBuyAvailableAmount() < orderAmount) {
+            throw new AccountException(ResponseMessage.DEPOSIT_DEFICIENT);
+        }
+
+        long remainingAmount = orderAmount;
+
+        long usedUnsettledAmount = Math.min(this.unsettledSellReceivableAmount, remainingAmount);
+        this.unsettledSellReceivableAmount -= usedUnsettledAmount;
+        remainingAmount -= usedUnsettledAmount;
+
+        long usedSettledAmount = remainingAmount;
+        this.availableSettledCashAmount -= usedSettledAmount;
+
+        this.reservedBuyAmount += orderAmount;
+
+        return new BuyReservationResult(
+                usedSettledAmount,
+                usedUnsettledAmount,
+                orderAmount
+        );
+    }
+
+    public void releaseBuyAmount(long usedSettledAmount, long usedUnsettledAmount,
+                                 long reservedAmount) {
+        this.availableSettledCashAmount += usedSettledAmount;
+        this.unsettledSellReceivableAmount += usedUnsettledAmount;
+        this.reservedBuyAmount -= reservedAmount;
     }
 }
