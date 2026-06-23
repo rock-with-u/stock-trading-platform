@@ -1,4 +1,4 @@
-package com.isyoudwn.execution_service.trade_execution.domain;
+package com.isyoudwn.account_service.trade_execution;
 
 import com.isyoudwn.common_service.domain.BaseEntity;
 import com.isyoudwn.common_service.exception.TradeExecutionException;

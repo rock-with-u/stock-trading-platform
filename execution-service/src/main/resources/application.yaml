@@ -16,5 +16,11 @@ spring:
         format_sql: true
     open-in-view: false
 
+  rabbitmq:
+    host: localhost
+    port: 5673
+    username: guest
+    password: guest
+
 server:
   port: ${SERVER_PORT}
